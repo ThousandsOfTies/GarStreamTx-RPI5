@@ -7,7 +7,7 @@
 # Simulation stubs and the Web Panel are never included here.
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 if [[ -f "${repo_root}/config/product.env" ]]; then
   # shellcheck disable=SC1091

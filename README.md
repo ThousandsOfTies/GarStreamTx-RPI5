@@ -1,18 +1,14 @@
-# gar-build-env
+# GarStreamTx
 
-Gapless Agent Runtime 用の Codespaces/devcontainer ビルド環境です。
-
-このリポジトリは Codespaces/devcontainer の共通実行基盤です。
-
-`main` は共通 devspace runtime だけを持ちます。製品ごとの設定は
-`gar-build-env` の製品ブランチに保存します。製品ブランチは
-`config/product.env`、任意の `scripts/product-*.sh`、必要なら
-`sources/*` submodule を持ちます。
+`gar-stream-tx` applicationと `raspberry-pi-5` 物理targetを固定した独立Product
+repositoryです。Codespaces/devcontainer設定、Product固有hardware、build hook、
+固定artifact契約を同じrepositoryで管理します。別の物理targetは別Product
+repositoryとして作成します。
 
 ## Layout
 
 ```text
-gar-build-env/
+GarStreamTx/
   .devcontainer/
   config/
     common.env
@@ -24,8 +20,8 @@ gar-build-env/
     setup-common.sh
     setup-product-branch.sh
     product-sim-build.sh.example
-    product-sim-build.sh       # product branch
-    product-target-build.sh    # product branch
+    product-sim-build.sh       # Product simulation hook
+    product-target-build.sh    # fixed Raspberry Pi 5 hook
   artifacts/             # generated output, ignored
 ```
 
@@ -94,11 +90,11 @@ artifact には persistent target config や machine IP を含めません。
 ## GarStream hardware contract
 
 製品が必要とするcamera/display/GPIO/networkは `hardware/requirements.json`、Raspberry Pi 5
-のresourceへの対応は `hardware/bindings/raspberry-pi-5.json` に追跡します。Targetの
+のresourceへの対応は `hardware/binding.json` に追跡します。Targetの
 capabilityと照合してから実機へ配置します。
 
 ```bash
-gar hw validate --workspace Local/GarStreamTx --binding hardware/bindings/raspberry-pi-5.json --json
+gar hw validate --workspace Local/GarStreamTx --binding hardware/binding.json --json
 ```
 
 これはTarget capability・product requirement・physical bindingの3層を分離します。IPやSSH
@@ -152,7 +148,7 @@ git add -A
 git commit -m "Update product repo"
 git push
 
-cd path/to/gar-build-env
+cd path/to/GarStreamTx
 git add path/to/submodule
 git commit -m "Update product submodule pointer"
 git push
@@ -160,7 +156,7 @@ git push
 
 ## Product Build Hooks
 
-`main` は製品固有のビルド手順を持ちません。製品ブランチで必要に応じて
+Product固有のビルド手順はこのrepositoryのhookとして管理します。必要に応じて
 次の hook を追加します。
 
 ```text
@@ -237,20 +233,17 @@ RXが自動検出し、network越しではRX側のdiscovery peer設定からTX�
 
 ## Hardware / Target Pack boundary
 
-Product固有の配線・割当は`hardware/`に置きます。現在のRaspberry Pi 5 profileは
-directory直下、旧RV1106 profileは`hardware/targets/luckfox-rv1106/`です。
-RV1106向けの旧Product制御ロジックと設計メモは`tools/rv1106/`と`docs/rv1106/`へ
-分離しています。toolchain、USB/SSH bring-up、device providerなど再利用可能な
+Product固有のRaspberry Pi 5配線・割当は`hardware/`に置きます。旧RV1106構成は
+独立した`GarStreamTx-RV1106` repositoryへ分離しました。toolchain、USB/SSH
+bring-up、device providerなど再利用可能な
 Target Pack資産だけを`gar-tools`に残します。
 
-## Application / Deployment / Target Capsule
+## Fixed application / target
 
-Application契約は`sources/gar-stream-tx/app.json`、Raspberry Pi 5との組み合わせは
-`config/deployments/raspberry-pi-5.json`、実機package実装は
-`scripts/targets/raspberry-pi-5/package.sh`が所有します。
-`scripts/product-target-build.sh`はGAR向けの互換入口です。
+Application契約は`sources/gar-stream-tx/app.json`、固定artifact契約は
+`config/artifact.json`、実機package実装は`scripts/target/package.sh`が所有します。
+`scripts/product-target-build.sh`はRaspberry Pi 5固定のGAR入口です。
 
 ```bash
-make check-deployment
-scripts/product-target-build.sh --describe
+make check-target
 ```

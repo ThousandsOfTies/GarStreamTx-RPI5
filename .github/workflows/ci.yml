@@ -1,9 +1,9 @@
-name: Product parent CI
+name: GarStreamTx CI
 
 on:
   pull_request:
   push:
-    branches: [GarStreamTx]
+    branches: [main]
 
 permissions:
   contents: read
@@ -28,8 +28,8 @@ jobs:
       - name: Checkout shared GarStream system/scenario owner
         uses: actions/checkout@v4
         with:
-          repository: ThousandsOfTies/gar-build-env
-          ref: GarStreamRx
+          repository: ThousandsOfTies/GarStreamRx
+          ref: main
           path: _rx-system
           persist-credentials: false
       - uses: actions/setup-python@v5
@@ -41,10 +41,9 @@ jobs:
           bash -n \
             scripts/product-sim-build.sh \
             scripts/product-sim-env-build.sh \
-            scripts/package-target.sh \
             scripts/product-target-build.sh \
-            scripts/targets/raspberry-pi-5/package.sh
-          scripts/product-target-build.sh --describe >/dev/null
+            scripts/target/package.sh
+          make check-target
       - name: Build actual simulation and Target hook bundles
         run: |
           rm -rf artifacts/ci artifacts/from-codespace
