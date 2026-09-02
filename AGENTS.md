@@ -1,8 +1,9 @@
-# GarStreamTx Agent Rules
+# GarStreamTx-RPI5 Agent Rules
 
-This Product repository fixes `gar-stream-tx` to `raspberry-pi-5`. Do not add another
-physical target or restore a Deployment dispatcher. Create another Product
-repository when the same application needs a different physical target.
+This Product repository is named `GarStreamTx-RPI5` and fixes the `gar-stream-tx`
+application to `raspberry-pi-5`. Do not add another physical target or restore a
+Deployment dispatcher. Create another Product repository when the same application
+needs a different physical target.
 
 - `sources`: pinned application and reusable-tool submodules
 - `hardware`: Product-specific hardware requirements and fixed binding

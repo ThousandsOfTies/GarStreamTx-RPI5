@@ -1,14 +1,14 @@
-# GarStreamTx
+# GarStreamTx-RPI5
 
-`gar-stream-tx` applicationと `raspberry-pi-5` 物理targetを固定した独立Product
-repositoryです。Codespaces/devcontainer設定、Product固有hardware、build hook、
-固定artifact契約を同じrepositoryで管理します。別の物理targetは別Product
+`GarStreamTx`（`gar-stream-tx`）applicationと `raspberry-pi-5` 物理targetを固定した
+独立Product repositoryです。Codespaces/devcontainer設定、Product固有hardware、build
+hook、固定artifact契約を同じrepositoryで管理します。別の物理targetは別Product
 repositoryとして作成します。
 
 ## Layout
 
 ```text
-GarStreamTx/
+GarStreamTx-RPI5/
   .devcontainer/
   config/
     common.env
@@ -148,7 +148,7 @@ git add -A
 git commit -m "Update product repo"
 git push
 
-cd path/to/GarStreamTx
+cd path/to/GarStreamTx-RPI5
 git add path/to/submodule
 git commit -m "Update product submodule pointer"
 git push
