@@ -83,3 +83,12 @@ Raspberry Pi 5ではBCM番号を旧sysfsのglobal GPIO番号として扱わず�
 `gar-app@gar-stream-tx.service`から非rootの`gar`accountとして起動します。
 real `/dev/video0`、`/dev/spidev0.0`、`/dev/gpiochip*`を利用し、gpio-sim/CUSE/Web
 Panelは実機へ導入しません。
+
+## KY-040の初期化パラメーター
+
+物理ターゲットの起動処理は`GAR_ENC_DEBOUNCE_US=1000`（要求値1ミリ秒）を初期値とします。
+環境変数で機種ごとに変更でき、0で無効にできます。シミュレータは明示的に0を指定します。
+値はCLK・DT・SWのGPIO入力に渡し、アプリのクリック数や番号判定の規則は変更しません。
+この初期値の実機確認済み対象は別ProductのLyra Zero Wです。このProductの物理ボードでは
+未確認のため、高速回転を含めて追従性を確認してから導入してください。
+Pythonアプリのartifactにはgar-toolsの共有`gar_gpio_debounce.py`を同梱します。

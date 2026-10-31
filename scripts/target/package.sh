@@ -45,6 +45,8 @@ fi
 rm -rf "${artifact_dir}"
 mkdir -p "${artifact_dir}"
 cp "${app_dir}"/*.py "${app_dir}/requirements.txt" "${artifact_dir}/"
+tools_dir="${repo_root}/${GAR_TOOLS_DIR:-sources/gar-tools}"
+install -m 0644 "${tools_dir}/targets/linux-device/runtime/gpio-input/python/gar_gpio_debounce.py" "${artifact_dir}/gar_gpio_debounce.py"
 
 cat > "${artifact_dir}/run" <<'EOF'
 #!/usr/bin/env bash
@@ -55,6 +57,7 @@ set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONUNBUFFERED="${PYTHONUNBUFFERED:-1}"
 export GAR_GPIO_CHIP="${GAR_GPIO_CHIP:-/dev/gpiochip0}"
+export GAR_ENC_DEBOUNCE_US="${GAR_ENC_DEBOUNCE_US:-1000}"
 export GAR_CAMERA_DEVICE="${GAR_CAMERA_DEVICE:-/dev/video0}"
 export GAR_CAMERA_FPS="${GAR_CAMERA_FPS:-30}"
 export GAR_LOCAL_DISPLAY="${GAR_LOCAL_DISPLAY:-1}"
@@ -70,6 +73,7 @@ cat > "${artifact_dir}/gar-stream-tx.env.example" <<'EOF'
 GAR_STREAM_SOURCE_NAME=GarStreamTx
 GAR_STREAM_DISCOVERY_PORT=5601
 GAR_GPIO_CHIP=/dev/gpiochip0
+GAR_ENC_DEBOUNCE_US=1000
 GAR_CAMERA_DEVICE=/dev/video0
 GAR_CAMERA_CAPS=image/jpeg
 GAR_CAMERA_IO_MODE=auto
