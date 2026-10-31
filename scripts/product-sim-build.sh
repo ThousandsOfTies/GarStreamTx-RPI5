@@ -45,6 +45,11 @@ mkdir -p "${artifact_dir}"
 # Compile the copied sources so build output never adds __pycache__ to the
 # application submodule checked out by this product branch.
 cp "${app_dir}"/*.py "${app_dir}/requirements.txt" "${artifact_dir}/"
+# Legacy artifacts without filtering do not require the helper.
+debounce_helper="${tools_dir}/targets/linux-device/runtime/gpio-input/python/gar_gpio_debounce.py"
+if [[ -f "$debounce_helper" ]]; then
+    install -m 0644 "$debounce_helper" "${artifact_dir}/gar_gpio_debounce.py"
+fi
 cp -a "${repo_root}/panel" "${panel_dir}"
 python3 -m compileall -q -f "${artifact_dir}"
 
@@ -62,6 +67,7 @@ Type=simple
 WorkingDirectory=${deploy_dest}
 Environment=PYTHONUNBUFFERED=1
 Environment=GAR_GPIO_CHIP=/dev/gpiochip0
+Environment=GAR_ENC_DEBOUNCE_US=0
 Environment=GAR_CAMERA_DEVICE=/dev/video0
 Environment=GAR_CAMERA_WIDTH=2048
 Environment=GAR_CAMERA_HEIGHT=1536
