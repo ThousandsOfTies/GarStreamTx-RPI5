@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "id": "gar-stream-tx-rpi5",
+  "components": {
+    "application": "sources/gar-stream-tx",
+    "tools": "sources/gar-tools",
+    "board": "sources/board-raspberry-pi-5"
+  },
+  "board_profile": "raspberry-pi-os-arm64",
+  "hardware": {
+    "physical": "hardware",
+    "simulation": ".gar/hardware/simulation",
+    "simulation_overrides": "hardware/simulation-overrides.csv",
+    "spi_miso": false
+  },
+  "build": {"backend": "python", "directory": "build/composed-python"},
+  "launch": {
+    "entrypoint": "camera_tx.py",
+    "runtime": "python",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1", "PYTHONUNBUFFERED": "1",
+      "GAR_CAMERA_DEVICE": "/dev/video0", "GAR_CAMERA_WIDTH": "2048", "GAR_CAMERA_HEIGHT": "1536",
+      "GAR_CAMERA_FPS": "30", "GAR_CAMERA_CAPS": "image/jpeg", "GAR_CAMERA_IO_MODE": "auto",
+      "GAR_LOCAL_DISPLAY": "1", "GAR_STREAM_SOURCE_NAME": "GarStreamTx", "GAR_STREAM_DISCOVERY_PORT": "5601"
+    },
+    "hardware_environment": {
+      "GAR_GPIO_CHIP": {"table": "gpio", "name": "encoder_a", "field": "chip"},
+      "GAR_ENC_CLK_GPIO": {"table": "gpio", "name": "encoder_a", "field": "line"},
+      "GAR_ENC_DT_GPIO": {"table": "gpio", "name": "encoder_b", "field": "line"},
+      "GAR_ENC_SW_GPIO": {"table": "gpio", "name": "encoder_sw", "field": "line"},
+      "GAR_ENC_DEBOUNCE_US": {"table": "gpio", "name": "encoder_a", "field": "debounce_us"},
+      "GAR_LCD_DC_GPIO": {"table": "gpio", "name": "lcd_dc", "field": "line"},
+      "GAR_LCD_RST_GPIO": {"table": "gpio", "name": "lcd_rst", "field": "line"},
+      "GAR_LCD_SPI_BUS": {"table": "spi", "name": "ili9341_lcd", "field": "bus"},
+      "GAR_LCD_SPI_DEVICE": {"table": "spi", "name": "ili9341_lcd", "field": "chip_select"},
+      "GAR_LCD_SPI_MAX_HZ": {"table": "spi", "name": "ili9341_lcd", "field": "max_speed_hz"}
+    }
+  },
+  "simulation": {"environment": {
+    "GAR_CAMERA_CAPS": "video/x-raw,format=YUY2", "GAR_CAMERA_IO_MODE": "mmap",
+    "GAR_CAMERA_TEST_PATTERN": "1", "GAR_STREAM_SOURCE_ID": "gar-stream-tx-sim",
+    "GAR_STREAM_METRICS_PATH": "/run/gar/metrics/gar-stream-tx.json"
+  }},
+  "deployment": {"manager": "gar-target", "application_id": "gar-stream-tx"},
+  "payload": [
+    {"component": "application", "include": ["*.py", "requirements.txt"]},
+    {"component": "tools", "include": ["targets/linux-device/runtime/gpio-input/python/gar_gpio_debounce.py"]}
+  ]
+}

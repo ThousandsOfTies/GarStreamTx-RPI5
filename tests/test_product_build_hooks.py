@@ -48,10 +48,20 @@ class ProductBuildHookTests(unittest.TestCase):
             shutil.copy2(
                 REPOSITORY_ROOT / "scripts" / "product-sim-build.sh", root / "scripts"
             )
+            shutil.copyfile(REPOSITORY_ROOT / 'product.json', root / 'product.json')
+            shutil.copytree(REPOSITORY_ROOT / 'tools', root / 'tools')
+            shutil.copytree(REPOSITORY_ROOT / 'hardware', root / 'hardware')
             (root / "sources/gar-stream-tx").mkdir(parents=True)
             (root / "sources/gar-tools/targets/linux-device/runtime").mkdir(
                 parents=True
             )
+            shutil.copytree(REPOSITORY_ROOT / 'sources/gar-tools/composition', root / 'sources/gar-tools/composition',
+                            ignore=shutil.ignore_patterns('__pycache__'))
+            helper = 'targets/linux-device/runtime/gpio-input/python/gar_gpio_debounce.py'
+            (root / 'sources/gar-tools' / helper).parent.mkdir(parents=True)
+            shutil.copyfile(REPOSITORY_ROOT / 'sources/gar-tools' / helper, root / 'sources/gar-tools' / helper)
+            shutil.copytree(REPOSITORY_ROOT / 'sources/board-raspberry-pi-5', root / 'sources/board-raspberry-pi-5',
+                            ignore=shutil.ignore_patterns('.git', '__pycache__'))
             (root / "panel").mkdir()
             (root / "sources/gar-stream-tx/camera_tx.py").touch()
             (root / "sources/gar-stream-tx/requirements.txt").touch()

@@ -1,8 +1,9 @@
 [submodule "sources/gar-stream-tx"]
 	path = sources/gar-stream-tx
 	url = https://github.com/ThousandsOfTies/gar-stream-tx
-	branch = main
 [submodule "sources/gar-tools"]
 	path = sources/gar-tools
 	url = https://github.com/ThousandsOfTies/gar-tools
-	branch = main
+[submodule "sources/board-raspberry-pi-5"]
+	path = sources/board-raspberry-pi-5
+	url = https://github.com/ThousandsOfTies/gar-board-raspberry-pi-5.git

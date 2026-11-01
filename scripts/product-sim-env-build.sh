@@ -12,7 +12,7 @@ if [[ -f "${repo_root}/config/product.env" ]]; then
   source "${repo_root}/config/product.env"
 fi
 
-tools_dir="${repo_root}/${GAR_TOOLS_DIR:-sources/gar-tools}"
+tools_dir="$(python3 "${repo_root}/tools/product.py" component tools)"
 runtime_dir="${tools_dir}/targets/linux-device/runtime"
 dockerfile="${repo_root}/Dockerfile"
 image="${GAR_SIM_RUNTIME_BUILD_IMAGE:-gar-build-env-arm64-runtime}"
