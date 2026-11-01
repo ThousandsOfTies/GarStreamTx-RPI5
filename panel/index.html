@@ -4,18 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GarStreamTx simulator</title>
-    <script type="module" src="/components/bridge-status.js"></script>
-    <script type="module" src="/components/rotary-control.js"></script>
-    <script type="module" src="/components/ili9341-display.js"></script>
-    <script type="module" src="./components/video-transmitter.js"></script>
+    <script type="module" src="./studio.js"></script>
     <link rel="stylesheet" href="./panel.css">
   </head>
   <body>
     <main>
-      <header><div><p>GARSTREAM</p><h1>TX · Camera transmitter</h1></div><gar-bridge-status></gar-bridge-status></header>
+      <header><div><p>GARSTREAM</p><h1>TX · Camera transmitter</h1></div><gar-connection-status id="bridge-status"></gar-connection-status></header>
       <p class="lead">The transmitter's local controls and display. This screen is independent of GarStreamRx.</p>
-      <section class="camera-debug"><gar-video-transmitter width="2048" height="1536" capture-fps="15" device-fps="30"></gar-video-transmitter></section>
-      <div class="hardware-grid"><gar-ili9341-display></gar-ili9341-display><gar-rotary-control></gar-rotary-control></div>
+      <section class="camera-debug"><gar-camera-input width="2048" height="1536" capture-fps="15" device-fps="30" label="PC CAMERA INPUT"></gar-camera-input></section>
+      <div class="hardware-grid"><gar-display id="ili9341-display" width="320" height="240" label="ILI9341 display"></gar-display><gar-rotary id="rotary" label="ROTARY ENCODER"></gar-rotary></div>
     </main>
   </body>
 </html>

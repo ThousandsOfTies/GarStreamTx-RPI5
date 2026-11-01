@@ -1,13 +1,15 @@
 # GarStreamTx: Raspberry Pi 5 実機配線
 
 この `hardware/` は GarStreamTx の実機とシミュレータで共有する論理 I/F 定義です。
-BCM GPIO 番号は `camera_tx.py` の既定値と一致しています。配線を変更する場合は、
-この CSV と起動時の `GAR_*` 環境変数を同時に更新してください。
+GPIO/SPIの実行設定はこのCSVが正本です。`product.json`の対応表から
+起動時の`GAR_*`環境へ渡すため、起動scriptへ番号を再記述しません。
+基板の資源表は`sources/board-raspberry-pi-5`で共有します。
+[構成説明](../docs/COMPOSITION.md)に生成物と役割をまとめています。
 
 ## 要件・Target capability・binding
 
 `requirements.json` は TX が必要とする装置と電気的条件だけを宣言します。
-`bindings/raspberry-pi-5.json` はその要件を Raspberry Pi 5 Target の resource に結びます。
+`binding.json` はその要件を Raspberry Pi 5 Target の resource に結びます。
 実際に使えるGPIO/SPI/USB/network、driver、電圧、pinmuxはTarget capabilityの責務です。
 そのため `gar hw validate --json --workspace Local/GarStreamTx` で、deploy前にpin conflict、
 driver/voltage不足、SPI bus/CS重複、最低SPI速度を確認できます。SSH alias、IP、実機固有の
@@ -92,3 +94,11 @@ Panelは実機へ導入しません。
 この初期値の実機確認済み対象は別ProductのLyra Zero Wです。このProductの物理ボードでは
 未確認のため、高速回転を含めて追従性を確認してから導入してください。
 Pythonアプリのartifactにはgar-toolsの共有`gar_gpio_debounce.py`を同梱します。
+
+
+## 設定の生成
+
+`gpio.csv`は物理入力のデバウンスを1000µs、`spi.csv`はアプリの既存動作に合わせて24MHzを指定します。
+シミュレータ固有のデバウンス0だけを`simulation-overrides.csv`へ記載します。
+`python tools/product.py hardware --environment simulation`の生成先は`.gar/hardware/simulation/`です。
+`requirements.json`・`binding.json`は既存GARの検査契約として残し、CSVとの一致を試験します。

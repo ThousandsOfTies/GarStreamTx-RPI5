@@ -37,6 +37,8 @@ jobs:
           python-version: '3.12'
       - name: Run parent tests and shell syntax checks
         run: |
+          python tools/product.py describe
+          python tools/product.py validate
           python -m unittest discover -s tests -v
           bash -n \
             scripts/product-sim-build.sh \

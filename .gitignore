@@ -1,1 +1,6 @@
 /artifacts/
+
+/.gar/
+/build/
+__pycache__/
+*.py[cod]
