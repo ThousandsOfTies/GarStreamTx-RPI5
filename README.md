@@ -195,6 +195,12 @@ USB UVC カメラを接続し、カメラ固有の caps と I/O mode を環境�
 `GAR_CAMERA_CAPS` / `GAR_CAMERA_IO_MODE` で指定します。アプリとネットワーク経路は
 シミュレータ・実機で共通です。
 
+Panel は製品専用の電子部品タグを持たず、`gar-tools` の共通 Web Component
+`<gar-camera-input>`、`<gar-display>`、`<gar-rotary>`、
+`<gar-connection-status>`を配置します。Linux Bridge の `/ws` メッセージを
+これらへ接続する変換だけを `panel/studio.js` に置き、共通部品は Bridge の
+`/gar-components/` から配信します。
+
 TX/RXのILI9341プレビューは実機と同じ320x240固定のため、High qualityやMaximumを
 選んでもその小型LCD上の細部は増えません。ProfileはRTPの送信解像度を変える設定です。
 

@@ -13,6 +13,16 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
 
 class ProductBuildHookTests(unittest.TestCase):
+    def test_sim_runtime_packages_shared_browser_components(self) -> None:
+        source = (REPOSITORY_ROOT / "scripts/product-sim-env-build.sh").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('mkdir -p "${files_dir}/web-bridge/gar-components"', source)
+        self.assertIn(
+            'cp -R "${tools_dir}/web-simulator/components/." "${files_dir}/web-bridge/gar-components/"',
+            source,
+        )
+
     def test_network_pipeline_forces_rtp_jpeg_compatible_format(self) -> None:
         source = (REPOSITORY_ROOT / "sources/gar-stream-tx/camera_tx.py").read_text(
             encoding="utf-8"
