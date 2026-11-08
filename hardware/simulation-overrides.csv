@@ -1,0 +1,2 @@
+table,name,field,value
+gpio,encoder_*,debounce_us,0

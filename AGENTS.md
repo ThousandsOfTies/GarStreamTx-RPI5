@@ -10,7 +10,10 @@ needs a different physical target.
 - `config/artifact.json`: fixed target artifact contract
 - `scripts/target`: Product-specific physical target implementation
 
-Keep reusable board support in `sources/gar-tools`. Commit and push child
+Board/OS resource data belong to `sources/board-raspberry-pi-5`; generic
+composition, build, packaging and simulator mechanisms belong to `sources/gar-tools`.
+Read `product.json` and `docs/COMPOSITION.md` before changing that split.
+Commit and push child
 repository changes before updating parent submodule pointers. Generated
 artifacts are not committed.
 
@@ -22,3 +25,15 @@ gar-tools guide; update the pin when using newer shared components. Build
 reusable device UI and interactions as shared Web
 Components in `sources/gar-tools/web-simulator/components/`; keep Product
 mapping, bridge protocol, and commands in the Product adapter.
+
+
+## Composition
+
+Product-owned hardware CSVs select peripheral uses. product.json selects the
+application, tools and board profile, application options, and deployment owner.
+Never copy board resource inventory into the application or Product hooks.
+The existing GAR Target Pack is a compatibility path; do not rewrite GAR core,
+install a second startup manager, change live target settings or redeploy hardware
+as part of this offline refactor. Preserve named runtime environment overrides.
+GarAdhocApp remains planned until a physical port is separately implemented and
+verified; do not make packaging succeed just to satisfy a composition check.

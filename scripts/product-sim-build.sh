@@ -12,8 +12,8 @@ if [[ -f "${repo_root}/config/product.env" ]]; then
   source "${repo_root}/config/product.env"
 fi
 
-app_dir="${repo_root}/${GAR_SIM_APP_DIR:-sources/gar-stream-tx}"
-tools_dir="${repo_root}/${GAR_TOOLS_DIR:-sources/gar-tools}"
+app_dir="$(python3 "${repo_root}/tools/product.py" component application)"
+tools_dir="$(python3 "${repo_root}/tools/product.py" component tools)"
 target="${GAR_SIM_TARGET:-linux-device}"
 artifact_root="${repo_root}/${GAR_SIM_ARTIFACT_ROOT:-artifacts/from-codespace}"
 artifact_dir="${artifact_root}/files/gar-stream-tx"
@@ -45,7 +45,14 @@ mkdir -p "${artifact_dir}"
 # Compile the copied sources so build output never adds __pycache__ to the
 # application submodule checked out by this product branch.
 cp "${app_dir}"/*.py "${app_dir}/requirements.txt" "${artifact_dir}/"
+# Legacy artifacts without filtering do not require the helper.
+debounce_helper="${tools_dir}/targets/linux-device/runtime/gpio-input/python/gar_gpio_debounce.py"
+if [[ -f "$debounce_helper" ]]; then
+    install -m 0644 "$debounce_helper" "${artifact_dir}/gar_gpio_debounce.py"
+fi
 cp -a "${repo_root}/panel" "${panel_dir}"
+# Resolve defaults from the Product and its generated simulation hardware.
+sim_environment="$(python3 "${repo_root}/tools/product.py" environment --environment simulation --format systemd)"
 python3 -m compileall -q -f "${artifact_dir}"
 
 printf '%s\n' "${panel_dest}" > "${artifact_root}/files/panel-dir"
@@ -60,25 +67,7 @@ PartOf=gar-sim.target
 [Service]
 Type=simple
 WorkingDirectory=${deploy_dest}
-Environment=PYTHONUNBUFFERED=1
-Environment=GAR_GPIO_CHIP=/dev/gpiochip0
-Environment=GAR_CAMERA_DEVICE=/dev/video0
-Environment=GAR_CAMERA_WIDTH=2048
-Environment=GAR_CAMERA_HEIGHT=1536
-Environment=GAR_CAMERA_FPS=30
-Environment=GAR_CAMERA_CAPS=video/x-raw,format=YUY2
-Environment=GAR_CAMERA_IO_MODE=mmap
-# Golden E2E is headless, so provide frames without a browser websocket.
-Environment=GAR_CAMERA_TEST_PATTERN=1
-Environment=GAR_LOCAL_DISPLAY=1
-Environment=GAR_LCD_DC_GPIO=23
-Environment=GAR_LCD_RST_GPIO=24
-Environment=GAR_STREAM_SOURCE_ID=gar-stream-tx-sim
-Environment=GAR_STREAM_SOURCE_NAME=GarStreamTx
-Environment=GAR_STREAM_DISCOVERY_PORT=5601
-# The Bridge exposes this atomic application observation through its node
-# metrics endpoint.  The path is runtime-owned; it is not part of the artifact.
-Environment=GAR_STREAM_METRICS_PATH=/run/gar/metrics/gar-stream-tx.json
+${sim_environment}
 # System topology values are materialised here by gar system deploy.  Keep
 # this after the static fallbacks: systemd applies assignments in declaration
 # order, so a non-default link port takes precedence at runtime.

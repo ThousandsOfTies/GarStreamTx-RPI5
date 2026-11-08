@@ -1,5 +1,11 @@
 # GarStreamTx-RPI5
 
+アプリ・共通ツール・基板情報をsubmoduleで組み合わせる構成は
+[product.json](product.json)と[構成説明](docs/COMPOSITION.md)を参照してください。
+この整理は`refactor/board-composition`ブランチにあります。
+基板情報の共通repoは[gar-board-raspberry-pi-5](https://github.com/ThousandsOfTies/gar-board-raspberry-pi-5)です。
+`python tools/product.py describe`で、実際の構成と固定コミットを確認できます。
+
 `GarStreamTx`（`gar-stream-tx`）applicationと `raspberry-pi-5` 物理targetを固定した
 独立Product repositoryです。Codespaces/devcontainer設定、Product固有hardware、build
 hook、固定artifact契約を同じrepositoryで管理します。別の物理targetは別Product
@@ -194,6 +200,12 @@ SourceとしてUDP 5601で自己広告します。GarStreamRxは検出したSour
 USB UVC カメラを接続し、カメラ固有の caps と I/O mode を環境変数
 `GAR_CAMERA_CAPS` / `GAR_CAMERA_IO_MODE` で指定します。アプリとネットワーク経路は
 シミュレータ・実機で共通です。
+
+Panel は製品専用の電子部品タグを持たず、`gar-tools` の共通 Web Component
+`<gar-camera-input>`、`<gar-display>`、`<gar-rotary>`、
+`<gar-connection-status>`を配置します。Linux Bridge の `/ws` メッセージを
+これらへ接続する変換だけを `panel/studio.js` に置き、共通部品は Bridge の
+`/gar-components/` から配信します。
 
 TX/RXのILI9341プレビューは実機と同じ320x240固定のため、High qualityやMaximumを
 選んでもその小型LCD上の細部は増えません。ProfileはRTPの送信解像度を変える設定です。

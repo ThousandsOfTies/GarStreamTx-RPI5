@@ -12,7 +12,7 @@ if [[ -f "${repo_root}/config/product.env" ]]; then
   source "${repo_root}/config/product.env"
 fi
 
-tools_dir="${repo_root}/${GAR_TOOLS_DIR:-sources/gar-tools}"
+tools_dir="$(python3 "${repo_root}/tools/product.py" component tools)"
 runtime_dir="${tools_dir}/targets/linux-device/runtime"
 dockerfile="${repo_root}/Dockerfile"
 image="${GAR_SIM_RUNTIME_BUILD_IMAGE:-gar-build-env-arm64-runtime}"
@@ -49,6 +49,11 @@ cp "${runtime_dir}/ili9341-stub/cuse_spi_ili9341" "${files_dir}/cuse_spi"
 rm -rf "${files_dir}/web-bridge"
 mkdir -p "${files_dir}/web-bridge"
 cp -R "${runtime_dir}/web-bridge/." "${files_dir}/web-bridge/"
+# The panel imports reusable browser parts through /gar-components/. Keep the
+# runtime artifact self-contained so deployment does not depend on a source
+# checkout remaining on the simulation host.
+mkdir -p "${files_dir}/web-bridge/gar-components"
+cp -R "${tools_dir}/web-simulator/components/." "${files_dir}/web-bridge/gar-components/"
 
 python3 - "${artifact_root}/artifact.json" "${target}" <<'PY'
 from __future__ import annotations
